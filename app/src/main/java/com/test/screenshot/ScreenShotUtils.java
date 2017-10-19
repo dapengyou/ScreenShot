@@ -33,6 +33,7 @@ public class ScreenShotUtils {
      */
     public static Bitmap takeScreenShot(Activity activity) {
         Bitmap bitmap = null;
+        int statusHeight = -1;
         View view = activity.getWindow().getDecorView();
         // 设置是否可以进行绘图缓存
         view.setDrawingCacheEnabled(true);
@@ -41,17 +42,23 @@ public class ScreenShotUtils {
         // 返回这个缓存视图
         bitmap = view.getDrawingCache();
         Log.d("123", "bitmap.getHeight():" + bitmap.getHeight());
-        // 获取状态栏高度
-        Rect frame = new Rect();
-        // 测量屏幕宽和高
-        view.getWindowVisibleDisplayFrame(frame);
-        int statusHeight = frame.top;
-        Log.d("jiangqq", "状态栏的高度为:" + statusHeight);
-        //状态栏的高度
-//        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+
+//        // 获取状态栏高度，状态栏高度方法一
+//        Rect frame = new Rect();
+//        // 测量屏幕宽和高
+//        view.getWindowVisibleDisplayFrame(frame);
+//        int statusHeight = frame.top;
+//        Log.d("jiangqq", "状态栏的高度为:" + statusHeight);
+        //状态栏的高度方法二
+        int resourceId = activity.getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+
+            statusHeight = activity.getResources().getDimensionPixelSize(resourceId);
+
+        }
 //        Log.d("jiangqq", "状态栏的高度1为:" + activity.getResources().getDimensionPixelSize(resourceId));
 
-        int viewTop = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
+
 //        int statusHeight = -1;
 //        //屏幕
 //        DisplayMetrics dm = new DisplayMetrics();
@@ -64,17 +71,18 @@ public class ScreenShotUtils {
 //
 //            statusHeight = activity.getResources().getDimensionPixelSize(resourceId);
 //
-//        }else {
-//            Toast.makeText(activity,"123",Toast.LENGTH_SHORT).show();
 //        }
-//
-//        int viewTop = dm.heightPixels - statusHeight;
+//        //View绘制区域，//viewtop方法一
+//        Rect outRect2 = new Rect();
+//        activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getDrawingRect(outRect2);
+//        int viewTop = dm.heightPixels - statusHeight - outRect2.height();
+        //viewTop方法二
+        int viewTop = activity.getWindow().findViewById(Window.ID_ANDROID_CONTENT).getTop();
 
         int width = activity.getWindowManager().getDefaultDisplay().getWidth();
         int height = activity.getWindowManager().getDefaultDisplay().getHeight();
         // 根据坐标点和需要的宽和高创建bitmap
         bitmap = Bitmap.createBitmap(bitmap, 0, statusHeight + viewTop, width, height - statusHeight - viewTop);
-        Log.d("123", "bitmap.getHeight():" + bitmap.getHeight() + "statusHeight:" + statusHeight + "height - statusHeight:" + (height - statusHeight-40));
         return bitmap;
     }
 
